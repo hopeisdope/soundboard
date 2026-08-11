@@ -173,6 +173,11 @@ body {
   pointer-events: none;
 }
 
+.tile-error .tile {
+  background: var(--danger);
+  color: #fff;
+}
+
 .reorder-controls {
   display: none;
 }
