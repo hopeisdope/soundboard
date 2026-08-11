@@ -16,9 +16,10 @@ A personal soundboard for your iPhone. Upload your own sounds (`.wav`, `.mp3`, `
 - Tap the pencil icon on a tile to rename it, change its emoji, replace its sound, or delete it.
 - Tap **Reorder** to rearrange buttons using the ◀ ▶ controls, then **Done** to exit.
 
-## Known limitation
+## Known limitations
 
-iOS can occasionally clear a Home Screen web app's local storage (including saved sounds) if it hasn't been opened in a long time (historically around a week of inactivity on some iOS versions). This is an iOS/Safari storage-eviction behavior, not something the app can fully prevent — open the app occasionally to keep its data alive, and treat it like local storage rather than a permanent cloud backup.
+- **Silent/ring switch.** The app asks iOS to treat its sounds as "media playback" (via the `AudioSession` API) so they play even with the phone's hardware switch flipped to silent. This is a newer Safari-only API and isn't guaranteed on every iOS version — if your device doesn't support it, sounds will be silenced whenever the switch is on, same as most web content on iOS. There's no way for a website to force this the way a native app can.
+- **Storage eviction.** iOS can occasionally clear a Home Screen web app's local storage (including saved sounds) if it hasn't been opened in a long time (historically around a week of inactivity on some iOS versions). This is an iOS/Safari storage-eviction behavior, not something the app can fully prevent — open the app occasionally to keep its data alive, and treat it like local storage rather than a permanent cloud backup.
 
 ## Local development
 
