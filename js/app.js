@@ -4,9 +4,14 @@ import { renderGrid, flashTileError } from "./ui.js";
 import { initModal, openAdd, openEdit } from "./modal.js";
 import { isReordering, toggleReordering, computeMovedOrder } from "./reorder.js";
 import { registerServiceWorker } from "./sw-register.js";
+import { isEnabled, setEnabled, startLoop, stopLoop, armLoopOnFirstGesture } from "./silent-unlock.js";
 
 const reorderToggle = document.getElementById("reorder-toggle");
 const addButtonEl = document.getElementById("add-button");
+const settingsButton = document.getElementById("settings-button");
+const settingsModal = document.getElementById("settings-modal");
+const settingsClose = document.getElementById("settings-close");
+const silentSwitchToggle = document.getElementById("silent-switch-toggle");
 
 let buttons = [];
 
@@ -61,6 +66,22 @@ initModal({
     invalidateSound(id);
     await refresh();
   },
+});
+
+settingsButton.addEventListener("click", () => settingsModal.showModal());
+settingsClose.addEventListener("click", () => settingsModal.close());
+
+silentSwitchToggle.checked = isEnabled();
+if (silentSwitchToggle.checked) armLoopOnFirstGesture();
+
+silentSwitchToggle.addEventListener("change", () => {
+  const enabled = silentSwitchToggle.checked;
+  setEnabled(enabled);
+  if (enabled) {
+    startLoop();
+  } else {
+    stopLoop();
+  }
 });
 
 registerServiceWorker();
