@@ -1,6 +1,6 @@
 import { getAllButtons, addButton, updateButton, deleteButton, reorderButtons } from "./db.js";
-import { playSound, invalidateBuffer, unlockAudio } from "./audio.js";
-import { renderGrid } from "./ui.js";
+import { playSound, invalidateSound } from "./audio.js";
+import { renderGrid, flashTileError } from "./ui.js";
 import { initModal, openAdd, openEdit } from "./modal.js";
 import { isReordering, toggleReordering, computeMovedOrder } from "./reorder.js";
 import { registerServiceWorker } from "./sw-register.js";
@@ -17,7 +17,12 @@ async function refresh() {
 
 function render() {
   renderGrid(buttons, { reordering: isReordering() }, {
-    onPlay: (button) => playSound(button.id, button.audioBlob),
+    onPlay: (button) => {
+      Promise.resolve(playSound(button.id, button.audioBlob)).catch((err) => {
+        console.error("Playback failed", err);
+        flashTileError(button.id);
+      });
+    },
     onEdit: (button) => openEdit(button),
     onMove: handleMove,
   });
@@ -45,7 +50,7 @@ initModal({
     await refresh();
   },
   onUpdate: async (id, patch) => {
-    if (patch.audioBlob) invalidateBuffer(id);
+    if (patch.audioBlob) invalidateSound(id);
     await updateButton(id, patch);
     await refresh();
   },
@@ -53,12 +58,10 @@ initModal({
     await deleteButton(id);
     const remaining = buttons.filter((b) => b.id !== id).map((b) => b.id);
     await reorderButtons(remaining);
-    invalidateBuffer(id);
+    invalidateSound(id);
     await refresh();
   },
 });
-
-document.addEventListener("pointerdown", unlockAudio, { once: true });
 
 registerServiceWorker();
 refresh();

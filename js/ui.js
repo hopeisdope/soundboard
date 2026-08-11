@@ -4,6 +4,7 @@ const emptyState = document.getElementById("empty-state");
 function createTile(button, index, total, { reordering, onPlay, onEdit, onMove }) {
   const wrap = document.createElement("div");
   wrap.className = "tile-wrap";
+  wrap.dataset.id = button.id;
 
   const tile = document.createElement("button");
   tile.type = "button";
@@ -63,4 +64,11 @@ export function renderGrid(buttons, state, handlers) {
   buttons.forEach((button, index) => {
     grid.appendChild(createTile(button, index, buttons.length, { ...state, ...handlers }));
   });
+}
+
+export function flashTileError(buttonId) {
+  const wrap = grid.querySelector(`.tile-wrap[data-id="${buttonId}"]`);
+  if (!wrap) return;
+  wrap.classList.add("tile-error");
+  setTimeout(() => wrap.classList.remove("tile-error"), 1500);
 }

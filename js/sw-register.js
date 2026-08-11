@@ -32,8 +32,11 @@ export function registerServiceWorker() {
   });
 
   reloadBtn.addEventListener("click", () => {
+    banner.hidden = true;
     if (currentRegistration && currentRegistration.waiting) {
       currentRegistration.waiting.postMessage("skipWaiting");
+    } else {
+      window.location.reload();
     }
   });
 }
