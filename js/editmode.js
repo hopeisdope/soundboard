@@ -1,16 +1,16 @@
-let reordering = false;
+let editing = false;
 
-export function isReordering() {
-  return reordering;
+export function isEditing() {
+  return editing;
 }
 
-export function setReordering(value) {
-  reordering = value;
+export function setEditing(value) {
+  editing = value;
 }
 
-export function toggleReordering() {
-  reordering = !reordering;
-  return reordering;
+export function toggleEditing() {
+  editing = !editing;
+  return editing;
 }
 
 // Returns a new array of ids with `id` swapped with its neighbor in `direction`

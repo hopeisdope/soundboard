@@ -1,4 +1,4 @@
-const CACHE_NAME = "soundboard-shell-v3";
+const CACHE_NAME = "soundboard-shell-v4";
 const SHELL_FILES = [
   "./",
   "./index.html",
@@ -9,7 +9,7 @@ const SHELL_FILES = [
   "./js/audio.js",
   "./js/ui.js",
   "./js/modal.js",
-  "./js/reorder.js",
+  "./js/editmode.js",
   "./js/sw-register.js",
   "./js/silent-unlock.js",
   "./icons/icon-180.png",
@@ -53,10 +53,4 @@ self.addEventListener("fetch", (event) => {
       });
     })
   );
-});
-
-self.addEventListener("message", (event) => {
-  if (event.data === "skipWaiting") {
-    self.skipWaiting();
-  }
 });

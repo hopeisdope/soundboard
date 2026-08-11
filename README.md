@@ -13,8 +13,7 @@ A personal soundboard for your iPhone. Upload your own sounds (`.wav`, `.mp3`, `
 
 - Tap **+** to add a sound: choose an audio file, give it a name, and type an emoji (use your iPhone's built-in emoji keyboard).
 - Tap any tile to play its sound. Sounds can overlap — tapping multiple buttons in quick succession plays them all.
-- Tap the pencil icon on a tile to rename it, change its emoji, replace its sound, or delete it.
-- Tap **Reorder** to rearrange buttons using the ◀ ▶ controls, then **Done** to exit.
+- Tap **Edit** to enter edit mode: tap any tile to rename it, change its emoji, replace its sound, or delete it, and use the ◀ ▶ controls to reorder buttons. Tap **Done** to exit back to normal tap-to-play.
 - Tap ⚙️ to open **Settings**.
 
 ## Silent switch workaround

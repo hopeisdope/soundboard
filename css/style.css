@@ -72,27 +72,6 @@ body {
   padding: 0;
 }
 
-.update-banner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 0 16px 8px;
-  padding: 10px 14px;
-  background: var(--surface-2);
-  border-radius: 12px;
-  font-size: 14px;
-}
-
-.update-banner button {
-  border: none;
-  background: var(--accent);
-  color: #fff;
-  border-radius: 8px;
-  padding: 6px 12px;
-  font-size: 14px;
-}
-
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -151,26 +130,8 @@ body {
   color: var(--text-dim);
 }
 
-.tile-edit {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 26px;
-  height: 26px;
-  border-radius: 999px;
-  border: none;
-  background: rgba(0, 0, 0, 0.35);
-  color: var(--text);
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.grid.reordering .tile,
-.grid.reordering .tile-edit {
-  opacity: 0.55;
-  pointer-events: none;
+.grid.editing .tile {
+  border: 2px dashed var(--accent);
 }
 
 .tile-error .tile {
@@ -182,15 +143,19 @@ body {
   display: none;
 }
 
-.grid.reordering .reorder-controls {
+.grid.editing .reorder-controls {
   display: flex;
   position: absolute;
   inset: 0;
   align-items: center;
   justify-content: space-between;
   padding: 0 6px;
-  pointer-events: auto;
+  pointer-events: none; /* let clicks in the middle pass through to the tile underneath */
   opacity: 1;
+}
+
+.grid.editing .reorder-controls button {
+  pointer-events: auto;
 }
 
 .reorder-controls button {
