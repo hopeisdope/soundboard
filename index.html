@@ -17,6 +17,7 @@
 <header class="app-header">
   <h1>Soundboard</h1>
   <div class="header-actions">
+    <button id="settings-button" class="icon-button" type="button" aria-label="Settings">⚙️</button>
     <button id="reorder-toggle" class="icon-button" type="button" aria-pressed="false">Reorder</button>
     <button id="add-button" class="icon-button icon-button-primary" type="button" aria-label="Add sound">+</button>
   </div>
@@ -72,6 +73,33 @@
       </div>
     </div>
   </form>
+</dialog>
+
+<dialog id="settings-modal" class="button-modal">
+  <h2>Settings</h2>
+
+  <div class="setting-row">
+    <label class="toggle-switch">
+      <input type="checkbox" id="silent-switch-toggle">
+      <span class="toggle-slider" aria-hidden="true"></span>
+    </label>
+    <div class="setting-copy">
+      <span class="setting-title">Play sound with ringer off</span>
+      <p class="setting-description">
+        Keeps a silent sound looping in the background so your taps play even
+        when the phone's side switch is set to silent. This is an unofficial
+        workaround, not a guaranteed fix: it uses a little extra battery, and
+        iOS may show a "Now Playing" item in Control Center/lock screen while
+        it's on.
+      </p>
+    </div>
+  </div>
+
+  <div class="modal-actions">
+    <div class="modal-actions-right">
+      <button type="button" id="settings-close" class="text-button primary">Done</button>
+    </div>
+  </div>
 </dialog>
 
 <script type="module" src="js/app.js"></script>
