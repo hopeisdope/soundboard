@@ -1,7 +1,7 @@
 const grid = document.getElementById("grid");
 const emptyState = document.getElementById("empty-state");
 
-function createTile(button, index, total, { reordering, onPlay, onEdit, onMove }) {
+function createTile(button, index, total, { editing, onPlay, onEdit, onMove }) {
   const wrap = document.createElement("div");
   wrap.className = "tile-wrap";
   wrap.dataset.id = button.id;
@@ -9,7 +9,7 @@ function createTile(button, index, total, { reordering, onPlay, onEdit, onMove }
   const tile = document.createElement("button");
   tile.type = "button";
   tile.className = "tile";
-  tile.setAttribute("aria-label", button.name);
+  tile.setAttribute("aria-label", editing ? `Edit ${button.name}` : button.name);
 
   const emoji = document.createElement("span");
   emoji.className = "tile-emoji";
@@ -21,16 +21,8 @@ function createTile(button, index, total, { reordering, onPlay, onEdit, onMove }
   name.textContent = button.name;
   tile.appendChild(name);
 
-  tile.addEventListener("click", () => onPlay(button));
+  tile.addEventListener("click", () => (editing ? onEdit(button) : onPlay(button)));
   wrap.appendChild(tile);
-
-  const editBtn = document.createElement("button");
-  editBtn.type = "button";
-  editBtn.className = "tile-edit";
-  editBtn.setAttribute("aria-label", `Edit ${button.name}`);
-  editBtn.textContent = "✎";
-  editBtn.addEventListener("click", () => onEdit(button));
-  wrap.appendChild(editBtn);
 
   const controls = document.createElement("div");
   controls.className = "reorder-controls";
@@ -58,7 +50,7 @@ function createTile(button, index, total, { reordering, onPlay, onEdit, onMove }
 
 export function renderGrid(buttons, state, handlers) {
   grid.innerHTML = "";
-  grid.classList.toggle("reordering", !!state.reordering);
+  grid.classList.toggle("editing", !!state.editing);
   emptyState.hidden = buttons.length > 0;
 
   buttons.forEach((button, index) => {

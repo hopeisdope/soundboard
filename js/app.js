@@ -2,11 +2,11 @@ import { getAllButtons, addButton, updateButton, deleteButton, reorderButtons } 
 import { playSound, invalidateSound } from "./audio.js";
 import { renderGrid, flashTileError } from "./ui.js";
 import { initModal, openAdd, openEdit } from "./modal.js";
-import { isReordering, toggleReordering, computeMovedOrder } from "./reorder.js";
+import { isEditing, toggleEditing, computeMovedOrder } from "./editmode.js";
 import { registerServiceWorker } from "./sw-register.js";
 import { isEnabled, setEnabled, startLoop, stopLoop, armLoopOnFirstGesture } from "./silent-unlock.js";
 
-const reorderToggle = document.getElementById("reorder-toggle");
+const editToggle = document.getElementById("edit-toggle");
 const addButtonEl = document.getElementById("add-button");
 const settingsButton = document.getElementById("settings-button");
 const settingsModal = document.getElementById("settings-modal");
@@ -21,7 +21,7 @@ async function refresh() {
 }
 
 function render() {
-  renderGrid(buttons, { reordering: isReordering() }, {
+  renderGrid(buttons, { editing: isEditing() }, {
     onPlay: (button) => {
       Promise.resolve(playSound(button.id, button.audioBlob)).catch((err) => {
         console.error("Playback failed", err);
@@ -40,10 +40,10 @@ async function handleMove(id, direction) {
   await refresh();
 }
 
-reorderToggle.addEventListener("click", () => {
-  const active = toggleReordering();
-  reorderToggle.setAttribute("aria-pressed", String(active));
-  reorderToggle.textContent = active ? "Done" : "Reorder";
+editToggle.addEventListener("click", () => {
+  const active = toggleEditing();
+  editToggle.setAttribute("aria-pressed", String(active));
+  editToggle.textContent = active ? "Done" : "Edit";
   render();
 });
 
