@@ -52,3 +52,22 @@ export function armLoopOnFirstGesture() {
   document.addEventListener("pointerdown", start, { once: true });
   document.addEventListener("touchend", start, { once: true });
 }
+
+// The loop only needs to run while the app is actually open and in use —
+// the real sounds it protects can only be tapped while the page is visible
+// anyway. Without this, iOS keeps the loop's media session alive (and on
+// the lock screen) indefinitely after backgrounding/closing the app, since
+// as far as iOS is concerned it's still "playing." Stopping on hidden and
+// re-arming on the next visible gesture keeps it scoped to active use.
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") {
+    armed = false;
+    stopLoop();
+  } else if (isEnabled()) {
+    armLoopOnFirstGesture();
+  }
+});
+
+window.addEventListener("pagehide", () => {
+  stopLoop();
+});
