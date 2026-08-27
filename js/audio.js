@@ -34,13 +34,27 @@ export function invalidateSound(buttonId) {
   urlCache.delete(buttonId);
 }
 
-// Uses a fresh <audio> element per play (rather than one shared/reused
-// element) so rapid re-taps and different buttons overlap independently.
-// Bypassing the ring/silent switch is handled separately, by declaring a
-// "playback" AudioSession above — that's the part iOS actually checks.
+// A small pool of persistent, reused <audio> elements — created once here
+// rather than a fresh Audio() per tap. Confirmed by inspecting myinstants.com's
+// own source: they use exactly one Audio() object, created once, with its
+// .src swapped and .play() re-invoked for every sound. That reuse (not the
+// AudioSession API above) appears to be the actual difference that keeps iOS
+// treating playback as legitimate "media" that bypasses the ring/silent
+// switch — constructing a brand-new Audio() on every tap, as this file used
+// to do, does not reliably get the same treatment. A pool (instead of their
+// single element) keeps that same reuse pattern while still allowing a few
+// sounds to overlap.
+const POOL_SIZE = 6;
+const pool = Array.from({ length: POOL_SIZE }, () => new Audio());
+let poolIndex = 0;
+
 export function playSound(buttonId, blob) {
   requestPlaybackAudioSession(); // cheap to re-affirm; runs inside the tap's gesture context too
   const url = getUrl(buttonId, blob);
-  const audio = new Audio(url);
+  const audio = pool[poolIndex];
+  poolIndex = (poolIndex + 1) % POOL_SIZE;
+  audio.pause();
+  audio.currentTime = 0;
+  audio.src = url;
   return audio.play();
 }
