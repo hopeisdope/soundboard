@@ -21,6 +21,14 @@ function createTile(button, index, total, { editing, onPlay, onEdit, onMove }) {
   name.textContent = button.name;
   tile.appendChild(name);
 
+  // Flash the tile on touchdown, not just on click: iOS Safari doesn't
+  // reliably apply :active on tap, so this JS-driven flash is what actually
+  // gives instant visual feedback that a press registered.
+  tile.addEventListener("pointerdown", () => {
+    if (editing) return;
+    wrap.classList.add("tile-pressed");
+    setTimeout(() => wrap.classList.remove("tile-pressed"), 150);
+  });
   tile.addEventListener("click", () => (editing ? onEdit(button) : onPlay(button)));
   wrap.appendChild(tile);
 

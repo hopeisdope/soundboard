@@ -1,4 +1,4 @@
-const CACHE_NAME = "soundboard-shell-v6";
+const CACHE_NAME = "soundboard-shell-v7";
 const SHELL_FILES = [
   "./",
   "./index.html",
