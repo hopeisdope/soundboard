@@ -5,6 +5,7 @@ import { initModal, openAdd, openEdit } from "./modal.js";
 import { isEditing, toggleEditing, computeMovedOrder } from "./editmode.js";
 import { registerServiceWorker } from "./sw-register.js";
 import { isEnabled, setEnabled, startLoop, stopLoop, armLoopOnFirstGesture } from "./silent-unlock.js";
+import { getLayout, setLayout } from "./layout.js";
 
 const editToggle = document.getElementById("edit-toggle");
 const addButtonEl = document.getElementById("add-button");
@@ -12,6 +13,7 @@ const settingsButton = document.getElementById("settings-button");
 const settingsModal = document.getElementById("settings-modal");
 const settingsClose = document.getElementById("settings-close");
 const silentSwitchToggle = document.getElementById("silent-switch-toggle");
+const layoutButtons = document.querySelectorAll("#layout-picker .segmented-option");
 
 let buttons = [];
 
@@ -21,7 +23,7 @@ async function refresh() {
 }
 
 function render() {
-  renderGrid(buttons, { editing: isEditing() }, {
+  renderGrid(buttons, { editing: isEditing(), layout: getLayout() }, {
     onPlay: (button) => {
       Promise.resolve(playSound(button.id, button.audioBlob)).catch((err) => {
         console.error("Playback failed", err);
@@ -82,6 +84,22 @@ silentSwitchToggle.addEventListener("change", () => {
   } else {
     stopLoop();
   }
+});
+
+function syncLayoutButtons() {
+  const current = getLayout();
+  layoutButtons.forEach((btn) => {
+    btn.setAttribute("aria-pressed", String(btn.dataset.layout === current));
+  });
+}
+syncLayoutButtons();
+
+layoutButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    setLayout(btn.dataset.layout);
+    syncLayoutButtons();
+    render();
+  });
 });
 
 registerServiceWorker();
