@@ -59,6 +59,7 @@ function createTile(button, index, total, { editing, onPlay, onEdit, onMove }) {
 export function renderGrid(buttons, state, handlers) {
   grid.innerHTML = "";
   grid.classList.toggle("editing", !!state.editing);
+  grid.classList.toggle("full-width", state.layout === "full-width");
   emptyState.hidden = buttons.length > 0;
 
   buttons.forEach((button, index) => {
