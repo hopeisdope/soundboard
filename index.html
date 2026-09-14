@@ -52,6 +52,11 @@
       <span class="field-error" id="error-emoji"></span>
     </label>
 
+    <label class="field">
+      <span class="field-label">Category</span>
+      <select id="field-category"></select>
+    </label>
+
     <div class="preview">
       <span class="preview-label">Preview</span>
       <div class="preview-tile">
@@ -101,11 +106,46 @@
     </div>
   </div>
 
+  <div class="setting-row setting-row-stack">
+    <div class="setting-copy">
+      <span class="setting-title">Categories</span>
+      <p class="setting-description">Group sounds under headers. Tap ✎ to rename, change the emoji, or delete.</p>
+    </div>
+    <ul id="category-list" class="category-list"></ul>
+    <button type="button" id="category-add" class="text-button primary category-add">+ Add category</button>
+  </div>
+
   <div class="modal-actions">
     <div class="modal-actions-right">
       <button type="button" id="settings-close" class="text-button primary">Done</button>
     </div>
   </div>
+</dialog>
+
+<dialog id="category-modal" class="button-modal">
+  <form id="category-form" method="dialog" novalidate>
+    <h2 id="category-modal-title">New category</h2>
+
+    <label class="field">
+      <span class="field-label">Name</span>
+      <input type="text" id="category-name" maxlength="30" placeholder="Memes" autocomplete="off">
+      <span class="field-error" id="category-error-name"></span>
+    </label>
+
+    <label class="field">
+      <span class="field-label">Icon (emoji)</span>
+      <input type="text" id="category-emoji" maxlength="8" placeholder="📁" autocomplete="off">
+      <span class="field-error" id="category-error-emoji"></span>
+    </label>
+
+    <div class="modal-actions">
+      <button type="button" id="category-delete" class="text-button danger" hidden>Delete</button>
+      <div class="modal-actions-right">
+        <button type="button" id="category-cancel" class="text-button">Cancel</button>
+        <button type="submit" id="category-save" class="text-button primary">Save</button>
+      </div>
+    </div>
+  </form>
 </dialog>
 
 <script type="module" src="js/app.js"></script>

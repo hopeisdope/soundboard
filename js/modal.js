@@ -1,3 +1,5 @@
+import { isSingleEmoji } from "./category-modal.js";
+
 const ALLOWED_EXT = ["mp3", "wav", "m4a"];
 const ALLOWED_MIME = [
   "audio/mpeg",
@@ -10,6 +12,7 @@ const ALLOWED_MIME = [
 ];
 const MAX_SIZE = 10 * 1024 * 1024;
 const DEFAULT_EMOJI = "🔊";
+const NEW_CATEGORY = "__new__";
 
 const dialog = document.getElementById("button-modal");
 const form = document.getElementById("button-form");
@@ -18,6 +21,7 @@ const fileInput = document.getElementById("field-file");
 const fileNameLabel = document.getElementById("file-name");
 const nameInput = document.getElementById("field-name");
 const emojiInput = document.getElementById("field-emoji");
+const categorySelect = document.getElementById("field-category");
 const previewEmoji = document.getElementById("preview-emoji");
 const previewName = document.getElementById("preview-name");
 const errorFile = document.getElementById("error-file");
@@ -29,16 +33,7 @@ const deleteBtn = document.getElementById("delete-button");
 let mode = "add"; // "add" | "edit"
 let editingButton = null;
 let selectedFile = null;
-let callbacks = { onAdd: null, onUpdate: null, onDelete: null };
-
-function isSingleEmoji(value) {
-  if (!value) return true;
-  if (typeof Intl !== "undefined" && Intl.Segmenter) {
-    const segments = [...new Intl.Segmenter("en", { granularity: "grapheme" }).segment(value)];
-    return segments.length === 1;
-  }
-  return [...value].length <= 2;
-}
+let callbacks = { onAdd: null, onUpdate: null, onDelete: null, getCategories: null, onNewCategory: null };
 
 function validateFile(file) {
   if (!file) return mode === "add" ? "A sound file is required." : null;
@@ -61,6 +56,27 @@ function updatePreview() {
   previewName.textContent = nameInput.value.trim() || "Sound name";
 }
 
+function buildCategoryOptions(selectedId) {
+  const categories = callbacks.getCategories ? callbacks.getCategories() : [];
+  categorySelect.innerHTML = "";
+  const none = document.createElement("option");
+  none.value = "";
+  none.textContent = "No category";
+  categorySelect.appendChild(none);
+  for (const category of categories) {
+    const option = document.createElement("option");
+    option.value = category.id;
+    option.textContent = `${category.emoji} ${category.name}`;
+    categorySelect.appendChild(option);
+  }
+  const create = document.createElement("option");
+  create.value = NEW_CATEGORY;
+  create.textContent = "＋ New category…";
+  categorySelect.appendChild(create);
+  categorySelect.value = selectedId || "";
+  if (categorySelect.value !== (selectedId || "")) categorySelect.value = "";
+}
+
 function resetForm() {
   form.reset();
   selectedFile = null;
@@ -73,6 +89,7 @@ export function openAdd() {
   mode = "add";
   editingButton = null;
   resetForm();
+  buildCategoryOptions(null);
   title.textContent = "Add sound";
   deleteBtn.hidden = true;
   dialog.showModal();
@@ -82,6 +99,7 @@ export function openEdit(button) {
   mode = "edit";
   editingButton = button;
   resetForm();
+  buildCategoryOptions(button.categoryId || null);
   title.textContent = "Edit sound";
   nameInput.value = button.name;
   emojiInput.value = button.emoji || "";
@@ -96,12 +114,23 @@ function close() {
   resetForm();
 }
 
+async function handleCategoryChange() {
+  if (categorySelect.value !== NEW_CATEGORY) {
+    categorySelect.dataset.previous = categorySelect.value;
+    return;
+  }
+  const previous = categorySelect.dataset.previous || "";
+  const created = await callbacks.onNewCategory();
+  buildCategoryOptions(created ? created.id : previous);
+}
+
 async function handleSubmit(event) {
   event.preventDefault();
   resetErrors();
 
   const name = nameInput.value.trim();
   const emoji = emojiInput.value.trim();
+  const categoryId = categorySelect.value && categorySelect.value !== NEW_CATEGORY ? categorySelect.value : null;
   let hasError = false;
 
   if (!name) {
@@ -125,11 +154,12 @@ async function handleSubmit(event) {
     await callbacks.onAdd({
       name,
       emoji: finalEmoji,
+      categoryId,
       audioBlob: selectedFile,
       mimeType: selectedFile.type || "",
     });
   } else {
-    const patch = { name, emoji: finalEmoji };
+    const patch = { name, emoji: finalEmoji, categoryId };
     if (selectedFile) {
       patch.audioBlob = selectedFile;
       patch.mimeType = selectedFile.type || "";
@@ -158,6 +188,12 @@ export function initModal(handlers) {
 
   nameInput.addEventListener("input", updatePreview);
   emojiInput.addEventListener("input", updatePreview);
+
+  // Remember the last real choice so cancelling "New category…" restores it.
+  categorySelect.addEventListener("focus", () => {
+    if (categorySelect.value !== NEW_CATEGORY) categorySelect.dataset.previous = categorySelect.value;
+  });
+  categorySelect.addEventListener("change", handleCategoryChange);
 
   form.addEventListener("submit", handleSubmit);
   cancelBtn.addEventListener("click", close);

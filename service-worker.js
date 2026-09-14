@@ -1,4 +1,4 @@
-const CACHE_NAME = "soundboard-shell-v8";
+const CACHE_NAME = "soundboard-shell-v9";
 const SHELL_FILES = [
   "./",
   "./index.html",
@@ -13,6 +13,7 @@ const SHELL_FILES = [
   "./js/sw-register.js",
   "./js/silent-unlock.js",
   "./js/layout.js",
+  "./js/category-modal.js",
   "./icons/icon-180.png",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
